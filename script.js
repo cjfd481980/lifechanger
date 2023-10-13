@@ -9,7 +9,7 @@ const centralPoint = {
 canvas.style.backgroundColor = 'black';
 let pointToWatch;
 const watchindex = 2000;
-const POINT_SIZE = 10;
+const POINT_SIZE = 5;
 const ENERGY_DECAY = 0.001;
 let myChart;
 
@@ -146,13 +146,15 @@ function handleCollision(pointA, pointB) {
 pointA.angularVelocity += angularEffect * scalingFactor;
 pointB.angularVelocity -= angularEffect * scalingFactor;
 
-    if (pointA.energy <= 0.5 && pointA.energy <= 0.2 && pointB.energy > pointA.energy) {
-        pointB.energy += pointB.energy * pointA.energy;
+    if (pointA.energy <= 0.5 && pointA.energy <= 0.4 && pointB.energy > pointA.energy) {
+        pointB.energy +=  pointA.energy;
+        //pointB.size+=pointB.energy*pointA.energy
         //pointB.energy = Math.min(pointB.energy, 1);  // Ensure energy doesn't exceed 1
         pointA.energy = 0;
         // pointB.flashColor = "blue";
-    } else if (pointB.energy <= 0.5 && pointB.energy <= 0.2 && pointA.energy > pointB.energy) {
-        pointA.energy += pointA.energy * pointB.energy;
+    } else if (pointB.energy <= 0.5 && pointB.energy <= 0.4 && pointA.energy > pointB.energy) {
+        pointA.energy +=  pointB.energy
+        //pointA.size+=pointA.energy*pointB.energy*
         //pointA.energy = Math.min(pointA.energy, 1);  // Ensure energy doesn't exceed 1
         pointB.energy = 0;
         // pointA.flashColor = "blue";
@@ -202,8 +204,8 @@ function updatePoints() {
 
         point.x += point.vx;
         point.y += point.vy;
-        point.x += point.angularVelocity/4;
-        point.y += point.angularVelocity/4;
+         point.x += point.angularVelocity/4;
+         point.y += point.angularVelocity/4;
 
         // Remove dots with 0 energy
         if (point.energy === 0) {
@@ -232,7 +234,7 @@ function draw() {
         let point = points[i];
 
         // Count alive and dead dots
-        if (point.energy > 0.2) {
+        if (point.energy > 0.5) {
             
             aliveCount++;
         } else {
@@ -274,14 +276,14 @@ if (point.energy > 2.20) {
 // Determine fill color
 const defaultColor = `rgb(${redComponent}, ${greenComponent}, ${blueComponent})`;
 const fillColor = point.flashColor || defaultColor;
-ctx.fillStyle = point.abouttodie ? "lightgrey" : fillColor;
+ctx.fillStyle = point.abouttodie ? "orange" : fillColor;
         point.color=fillColor;
         //point.size = POINT_SIZE + POINT_SIZE * 2 * point.energy<POINT_SIZE?POINT_SIZE:POINT_SIZE + POINT_SIZE * 2 * point.energy;
         // Determine size (special dot is larger)
-         point.size=point.size * 0.9+0.1*point.energy*ENERGY_DECAY<=POINT_SIZE?POINT_SIZE:point.size * 0.9+0.1*point.energy*ENERGY_DECAY>POINT_SIZE*4?POINT_SIZE*4:point.size * 0.9+0.1*point.energy*ENERGY_DECAY;
+        //  point.size=point.size * 0.9+0.1*point.energy*ENERGY_DECAY<=POINT_SIZE?POINT_SIZE:point.size * 0.9+0.1*point.energy*ENERGY_DECAY>POINT_SIZE*4?POINT_SIZE*4:point.size * 0.9+0.1*point.energy*ENERGY_DECAY;
         const size =  point.size;
         point.checker=0.1*point.energy*ENERGY_DECAY
-        ctx.arc(point.x, point.y, size, 0, 2 * Math.PI);
+        ctx.arc(point.x, point.y, size>0?size:0, 0, 2 * Math.PI);
         ctx.fill();
 
         // Reset flash color after drawing
